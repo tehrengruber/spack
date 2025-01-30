@@ -381,23 +381,11 @@ def credentials_from_mirrors(
 
 def create_opener():
     """Create an opener that can handle OCI authentication."""
-    opener = urllib.request.OpenerDirector()
-
-    proxies = urllib.request.getproxies()
-    if proxies:
-        proxy_handler = urllib.request.ProxyHandler(proxies)
-        opener.add_handler(proxy_handler)
-
-    for handler in [
-        urllib.request.UnknownHandler(),
-        urllib.request.HTTPSHandler(context=spack.util.web.ssl_create_default_context()),
-        spack.util.web.SpackHTTPDefaultErrorHandler(),
-        urllib.request.HTTPRedirectHandler(),
-        urllib.request.HTTPErrorProcessor(),
-        OCIAuthHandler(credentials_from_mirrors),
-    ]:
-        opener.add_handler(handler)
-    return opener
+    return urllib.request.build_opener(
+      urllib.request.HTTPSHandler(context=spack.util.web.ssl_create_default_context()),
+      spack.util.web.SpackHTTPDefaultErrorHandler(),
+      OCIAuthHandler(credentials_from_mirrors)
+    )
 
 
 def ensure_status(request: urllib.request.Request, response: HTTPResponse, status: int):
