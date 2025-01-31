@@ -382,7 +382,6 @@ def credentials_from_mirrors(
 def create_opener():
     """Create an opener that can handle OCI authentication."""
     opener = urllib.request.OpenerDirector()
-
     for handler in [
         urllib.request.ProxyHandler(),
         urllib.request.UnknownHandler(),
